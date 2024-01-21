@@ -53,15 +53,7 @@ class MainActivity : Hilt_MainActivity() {
         return true
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        val mobileTheme = preferenceUtils.getPrefInt(MOBILE_THEME)
-        if (mobileTheme == DARK_MODE) {
-            setTheme(R.style.Base_Theme_Movies_Dark)
-        } else if (mobileTheme == LIGHT_MODE) {
-            setTheme(R.style.Base_Theme_Movies)
-        }
-    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
@@ -96,26 +88,26 @@ class MainActivity : Hilt_MainActivity() {
     }
 
 
-    private fun toggleTheme(isDarkMode: Boolean) {
-        if (isDarkMode) {
-            setTheme(R.style.Base_Theme_Movies_Dark)
-        } else {
-            setTheme(R.style.Base_Theme_Movies)
-        }
-        onRestart()
-    }
+//    private fun toggleTheme(isDarkMode: Boolean) {
+//        if (isDarkMode) {
+////            setTheme(R.style.Base_Theme_Movies_Dark)
+//        } else {
+//            setTheme(R.style.Base_Theme_Movies)
+//        }
+//        onRestart()
+//    }
 
 
     private fun handleTabLayoutClick() {
         binding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 binding.switchCompat.text = resources.getString(R.string.dark_mode)
-                toggleTheme(true)
+//                toggleTheme(true)
                 preferenceUtils.saveInt(MOBILE_THEME, DARK_MODE)
 
             } else {
                 binding.switchCompat.text = resources.getString(R.string.light_mode)
-                toggleTheme(false)
+//                toggleTheme(false)
                 preferenceUtils.saveInt(MOBILE_THEME, LIGHT_MODE)
             }
         }
