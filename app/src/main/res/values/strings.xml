@@ -4,6 +4,7 @@
     <string name="poster">Poster</string>
     <string name="all">All</string>
     <string name="rating">Rating: %1$s</string>
+    <string name="popularity">Popularity: %1$s</string>
     <string name="description">Description:</string>
     <string name="genres">Genres</string>
     <string name="back_button">Back Button</string>
@@ -14,4 +15,5 @@
     <string name="movies">Movies</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="light_mode">Light Mode</string>
+    <string name="no_data_to_show">No Data To Show</string>
 </resources>

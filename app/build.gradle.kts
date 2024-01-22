@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.Packaging
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -9,11 +11,22 @@ android {
     namespace = "com.example.movies"
     compileSdk = 34
 
+    testOptions{
+        packaging{
+            jniLibs {
+                useLegacyPackaging = true
+            }
+        }
+    }
     buildFeatures {
         viewBinding = true
         buildConfig = true
     }
 
+    packaging {
+        resources.excludes.add("META-INF/LICENSE.md")
+        resources.excludes.add("META-INF/LICENSE-notice.md")
+    }
 
 
     defaultConfig {
@@ -33,6 +46,7 @@ android {
         }
 
         release {
+            isCrunchPngs= false
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -60,59 +74,57 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    // Retrofit Dependency
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation("com.github.bumptech.glide:glide:4.13.0")
+
+    // Glide Dependency
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // Room Dependency
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-paging:$roomVersion")
 
-
+    // Dagger Hilt Dependency
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-compiler:2.48")
 
-    // Room runtime dependency
-
-    implementation("androidx.room:room-paging:$roomVersion")
-
-
-
+    // Coroutines Dependency
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
 
+    // Nav graph Dependency
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
 
 
-    // optional - Kotlin Extensions and Coroutines support for Room
 
     val lifecycle_version = "2.7.0"
-    // ViewModel
+    // ViewModel Dependency
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    // LiveData
+    // LiveData Dependency
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-    // Lifecycles only (without ViewModel or LiveData)
+    // Lifecycles only Dependency (without ViewModel or LiveData)
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
 
 
     implementation("androidx.collection:collection-ktx:1.3.0")
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    // Jacoco dependencies
-    implementation("org.jacoco:org.jacoco.core:0.8.8")
-
+    // Timber Logger Dependency
     implementation("com.jakewharton.timber:timber:5.0.1")
 
+    // Json Include Dependency
     implementation("com.fasterxml.jackson.core:jackson-databind:2.11.1")
     implementation("com.fasterxml.jackson.core:jackson-core:2.11.1")
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.11.1")
 
+    // Swipe Refresh Layout Dependency
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     val mockkVersion = "1.13.9"
@@ -122,36 +134,16 @@ dependencies {
     androidTestImplementation("io.mockk:mockk-android:${mockkVersion}")
     androidTestImplementation("io.mockk:mockk-agent:${mockkVersion}")
     testImplementation ("app.cash.turbine:turbine:1.0.0")
-    testImplementation ("org.junit.jupiter:junit-jupiter:5.9.3")
     testImplementation ("io.mockk:mockk:1.13.9")
 
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
-    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
+
     androidTestImplementation ("androidx.arch.core:core-testing:2.2.0")
+    testImplementation ("com.google.truth:truth:1.1.3")
 
-
-
-
+    // Multidex Dependency
+    implementation ("androidx.multidex:multidex:2.0.1")
 
 }
-
-//tasks.withType(Test)
-
-
-//tasks{
-//    "testDebugUnitTest" {
-//        finalizedBy("jacocoTestReport")
-//    }
-//
-//    "testReleaseUnitTest" {
-//        finalizedBy("jacocoTestReport")
-//    }
-//
-//    "jacocoTestReport" {
-//        dependsOn("testDebugUnitTest", "testReleaseUnitTest")
-//    }
-//}
-
 
 kapt {
     correctErrorTypes = true

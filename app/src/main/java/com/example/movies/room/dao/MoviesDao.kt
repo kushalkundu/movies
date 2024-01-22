@@ -16,16 +16,16 @@ interface MoviesDao {
     suspend fun insertMovie(movieListModel: List<MovieListModel>)
 
 
-    @Query("SELECT * FROM movieList WHERE ((genreIds LIKE :genreId || ',%') OR (genreIds LIKE '%,' || :genreId || ',%') OR  (genreIds LIKE '%,' || :genreId) OR (genreIds LIKE :genreId)) ORDER BY voteAverage ASC")
+    @Query("SELECT * FROM movieList WHERE ((genreIds LIKE :genreId || ',%') OR (genreIds LIKE '%,' || :genreId || ',%') OR  (genreIds LIKE '%,' || :genreId) OR (genreIds LIKE :genreId)) ORDER BY popularity ASC")
     fun getMoviesListAscending(genreId: String): PagingSource<Int, MovieListModel>
 
-    @Query("SELECT * FROM movieList ORDER BY voteAverage ASC")
+    @Query("SELECT * FROM movieList ORDER BY popularity ASC")
     fun getMoviesListAscending(): PagingSource<Int, MovieListModel>
 
-    @Query("SELECT * FROM movieList WHERE ((genreIds LIKE :genreId || ',%') OR (genreIds LIKE '%,' || :genreId || ',%') OR  (genreIds LIKE '%,' || :genreId) OR (genreIds LIKE :genreId)) ORDER BY voteAverage DESC ")
+    @Query("SELECT * FROM movieList WHERE ((genreIds LIKE :genreId || ',%') OR (genreIds LIKE '%,' || :genreId || ',%') OR  (genreIds LIKE '%,' || :genreId) OR (genreIds LIKE :genreId)) ORDER BY popularity DESC ")
     fun getMoviesListDescending(genreId: String): PagingSource<Int, MovieListModel>
 
-    @Query("SELECT * FROM movieList ORDER BY voteAverage DESC")
+    @Query("SELECT * FROM movieList ORDER BY popularity DESC")
     fun getMoviesListDescending(): PagingSource<Int, MovieListModel>
 
 

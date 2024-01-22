@@ -14,14 +14,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.example.movies.MainActivity
 import com.example.movies.R
 import com.example.movies.databinding.FragmentAllBinding
+import com.example.movies.models.Genre
 import com.example.movies.ui.adapters.AllFragmentAdapter
 import com.example.movies.ui.adapters.ProgressBarAdapter
 import com.example.movies.utils.MovieUtils.checkNetwork
 import com.example.movies.viewmodels.MoviesViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
 
 
 // Fragment for all Genre Tabs
@@ -32,6 +33,7 @@ class AllFragment : Hilt_AllFragment(), OnRefreshListener {
     private lateinit var binding: FragmentAllBinding
     private lateinit var adapter: AllFragmentAdapter
     private lateinit var viewModel: MoviesViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,18 +48,26 @@ class AllFragment : Hilt_AllFragment(), OnRefreshListener {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (requireActivity() as MainActivity).viewModel
         initUI()
+        handleTabLayout()
         callObservers()
     }
 
     private fun callObservers() {
-        /* viewModel.movieListMutableLiveData.observe(viewLifecycleOwner) {
-             Timber.e("it: ${it.toString()}")
+        viewModel.apply {
+            genreMutableLiveData.observe(requireActivity()) {
+                if (!it.isNullOrEmpty()) {
+                    it.forEach { genre -> createTabItem(genre) }
+                }
+            }
 
-             if (!it.isNullOrEmpty()) {
-                 Timber.e("size: ${it.size}")
-                 adapter.submitList(it)
-             }
-         }*/
+            isLoadingProgressBar.observe(requireActivity()) {
+                if (checkNetwork(requireContext())) {
+                    binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
+                } else {
+                    binding.progressBar.visibility = View.GONE
+                }
+            }
+        }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -75,7 +85,9 @@ class AllFragment : Hilt_AllFragment(), OnRefreshListener {
 
     private fun initUI() {
         binding.srlAll.setOnRefreshListener(this)
+        createTabItem(Genre(id = 0, name = resources.getString(R.string.all)))
         viewModel.callMoviesListApi(checkNetwork(requireContext()))
+        (activity as MainActivity).setSupportActionBar(binding.toolbar)
         binding.apply {
             adapter = AllFragmentAdapter(requireContext(), onClick = { movieId ->
                 viewModel.callMovieDetails(
@@ -90,7 +102,7 @@ class AllFragment : Hilt_AllFragment(), OnRefreshListener {
                             } else {
                                 Snackbar.make(
                                     binding.root,
-                                    "No Data To Show",
+                                    requireContext().resources.getString(R.string.no_data_to_show),
                                     Snackbar.LENGTH_SHORT
                                 )
                                     .show()
@@ -103,11 +115,7 @@ class AllFragment : Hilt_AllFragment(), OnRefreshListener {
             val progressBarAdapter = ProgressBarAdapter()
             gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return if (position == adapter.itemCount && progressBarAdapter.itemCount > 0) {
-                        2
-                    } else {
-                        1
-                    }
+                    return if (position == adapter.itemCount && progressBarAdapter.itemCount > 0) 2 else 1
                 }
             }
             recyclerAll.layoutManager = gridLayoutManager
@@ -119,9 +127,38 @@ class AllFragment : Hilt_AllFragment(), OnRefreshListener {
     }
 
     override fun onRefresh() {
-        viewModel.callGenreListApi(checkNetwork(requireContext()))
-        viewModel.callMoviesListApi(checkNetwork(requireContext()))
+        viewModel.apply {
+            callGenreListApi(checkNetwork(requireContext()))
+            callMoviesListApi(checkNetwork(requireContext()))
+        }
     }
 
+    private fun handleTabLayout() {
+
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                viewModel.genreSelected = tab!!.id
+                viewModel.callMoviesListApi(checkNetwork(requireContext()))
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                // Do Nothing
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                // Do Nothing
+            }
+
+        })
+    }
+
+
+    private fun createTabItem(genre: Genre) {
+        val tab = binding.tabLayout.newTab().apply {
+            this.text = genre.name
+            this.id = genre.id!!
+        }
+        binding.tabLayout.addTab(tab)
+    }
 
 }

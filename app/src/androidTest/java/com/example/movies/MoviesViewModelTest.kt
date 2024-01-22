@@ -7,6 +7,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.movies.models.Genre
+import com.example.movies.models.MovieDetailModel
 import com.example.movies.network.useCases.MoviesUseCase
 import com.example.movies.room.AppDatabase
 import com.example.movies.room.daoImpl.GenreRepo
@@ -27,11 +28,11 @@ class MoviesViewModelTest : TestCase() {
 
     private lateinit var moviesViewModel: MoviesViewModel
     private lateinit var db: AppDatabase
-
     private lateinit var moviesUseCase: MoviesUseCase
     private lateinit var movieListRepo: MovieListRepo
     private lateinit var genreRepo: GenreRepo
     private lateinit var movieDetailRepo: MovieDetailRepo
+
 
     @Before
     public override fun setUp() {
@@ -41,18 +42,19 @@ class MoviesViewModelTest : TestCase() {
             Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).allowMainThreadQueries()
                 .build()
         moviesUseCase = mockk<MoviesUseCase>()
-        movieListRepo = mockk<MovieListRepo>()
-        genreRepo = mockk<GenreRepo>()
-        movieDetailRepo = mockk<MovieDetailRepo>()
+        movieListRepo = MovieListRepo(db)
+        genreRepo = GenreRepo(db)
+        movieDetailRepo = MovieDetailRepo(db)
         moviesViewModel =
             MoviesViewModel(moviesUseCase, movieListRepo, genreRepo, movieDetailRepo, db)
     }
+
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Test
-    fun testGenreRepo() {
+    fun test_Genre_Repo() {
         moviesViewModel.viewModelScope.launch {
             genreRepo.insertGenre(Genre(id = 1, "Adventure"))
             genreRepo.getGenreList()
@@ -60,6 +62,19 @@ class MoviesViewModelTest : TestCase() {
         val result = moviesViewModel.genreMutableLiveData.getOrAwaitValue().find {
             it.id == 1 && it.name == "Adventure"
         }
-        assertTrue(result!=null)
+        assertTrue(result != null)
     }
+
+    @Test
+    fun test_Movie_Detail_Repo() {
+        moviesViewModel.viewModelScope.launch {
+            movieDetailRepo.insertMovieDetail(MovieDetailModel(id = 1, title = "The Godfather"))
+            moviesViewModel.callMovieDetails(1, false) {}
+        }
+        assertEquals(1, moviesViewModel.movieDetailMutableLiveData.getOrAwaitValue().id)
+    }
+
+
 }
+
+

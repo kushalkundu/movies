@@ -10,8 +10,8 @@ class MovieListUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        includeAdult: Boolean = true,
-        includeVideo: Boolean = true,
+        includeAdult: Boolean = false,
+        includeVideo: Boolean = false,
         language: String = Constants.LANGUAGE_EN,
         region: String = Constants.REGION,
         withGenres: String

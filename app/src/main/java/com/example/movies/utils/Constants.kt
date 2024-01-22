@@ -14,11 +14,6 @@ object Constants {
     const val YYYY_MM_DD = "yyyy-MM-dd"
     const val ASCENDING = "popularity.asc"
     const val DESCENDING = "popularity.desc"
-    const val SHARED_PREFS = "Movie_Preferences"
-    const val DARK_MODE = 1
-    const val LIGHT_MODE = 2
-    const val SYSTEM_DEFAULT = 0
-    const val MOBILE_THEME = "mobile_theme"
     const val AUTHORIZATION = "Authorization"
     const val ACCEPT = "Accept"
     const val APPLICATION_JSON = "application/json"

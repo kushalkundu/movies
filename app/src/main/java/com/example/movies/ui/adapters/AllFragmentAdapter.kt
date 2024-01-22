@@ -40,7 +40,7 @@ class AllFragmentAdapter(private val context: Context, val onClick: (Int) -> Uni
 
         fun onBind(data: MovieListModel?, context: Context) {
             binding.apply {
-                this.root.setOnClickListener {
+                root.setOnClickListener {
                     if (data != null) {
                         onClick(data.id)
                     }
@@ -52,8 +52,8 @@ class AllFragmentAdapter(private val context: Context, val onClick: (Int) -> Uni
                     Constants.DD_MM_YYYY
                 )
                 Glide.with(context).load("${URL.IMAGE_BASE_URL}${data?.posterPath}")
-                    .error(R.drawable.default_movie_poster)
-                    .placeholder(R.drawable.default_movie_poster).into(ivPoster)
+                    .error(R.drawable.dummy)
+                    .placeholder(R.drawable.dummy).into(ivPoster)
             }
 
         }
@@ -69,15 +69,12 @@ class AllFragmentAdapter(private val context: Context, val onClick: (Int) -> Uni
                 return oldItem.id == newItem.id
             }
 
-
             override fun areContentsTheSame(
                 oldItem: MovieListModel,
                 newItem: MovieListModel
             ): Boolean {
                 return oldItem == newItem
             }
-
-
         }
     }
 

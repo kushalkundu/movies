@@ -2,22 +2,20 @@ package com.example.movies.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import java.text.SimpleDateFormat
 
 // Movie App Utility Class
 object MovieUtils {
 
-    fun checkNetwork(context: Context?): Boolean {
-        return if (context != null) {
-            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val activeNetwork = cm.activeNetworkInfo
-            if (null != activeNetwork) {
-                if (activeNetwork.type == ConnectivityManager.TYPE_WIFI) true else activeNetwork.type == ConnectivityManager.TYPE_MOBILE
-            } else false
-
-        } else {
-            false
-        }
+    fun checkNetwork(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
+        return networkCapabilities != null &&
+                (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
     }
 
     fun getFormattedDate(date: String?, inputFormat: String?, outputFormat: String?): String? {

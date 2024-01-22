@@ -60,7 +60,7 @@ class DetailFragment : Hilt_DetailFragment(), OnRefreshListener {
     private fun setData(movieDetailModel: MovieDetailModel) {
         movieId = movieDetailModel.id
         Glide.with(requireContext()).load("${URL.IMAGE_BASE_URL}${movieDetailModel.posterPath}")
-            .error(R.drawable.default_movie_poster).placeholder(R.drawable.default_movie_poster)
+            .error(R.drawable.dummy).placeholder(R.drawable.dummy)
             .into(binding.ivPoster)
         binding.tvTitle.text = movieDetailModel.title
         binding.tvReleaseDate.text =
@@ -70,14 +70,17 @@ class DetailFragment : Hilt_DetailFragment(), OnRefreshListener {
                 R.string.rating,
                 String.format("%.2f", movieDetailModel.voteAverage)
             )
+        binding.tvPopularity.text = resources.getString(
+            R.string.popularity,
+            String.format("%.2f", movieDetailModel.popularity)
+        )
         binding.tvDetails.text = movieDetailModel.overview
         if (!movieDetailModel.genres.isNullOrEmpty()) {
             addGenreChips(movieDetailModel.genres!!)
-
         }
-
     }
 
+    //Add Genre Chips
     private fun addGenreChips(list: List<GenreX>) {
         binding.genreChipGroup.removeAllViews()
         for (ele in list) {
@@ -92,7 +95,7 @@ class DetailFragment : Hilt_DetailFragment(), OnRefreshListener {
             ).toInt()
             chip.setPadding(paddingDp, paddingDp, paddingDp, paddingDp)
             chip.text = tagName
-            chip.textSize = 12f
+            chip.textSize = 14f
             chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
             chip.chipBackgroundColor =
                 ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.blue))

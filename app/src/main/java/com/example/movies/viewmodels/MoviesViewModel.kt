@@ -43,6 +43,7 @@ class MoviesViewModel @Inject constructor(
 
     val genreMutableLiveData: LiveData<List<Genre>> = database.genreDao().getGenreList()
     val movieDetailMutableLiveData: MutableLiveData<MovieDetailModel> = MutableLiveData()
+    val isLoadingProgressBar: MutableLiveData<Boolean> = MutableLiveData()
 
     private val _state = MutableStateFlow<PagingData<MovieListModel>?>(null)
     val state = _state.asStateFlow()
@@ -54,6 +55,7 @@ class MoviesViewModel @Inject constructor(
                 val response = moviesUseCase.genreList.invoke()
                 if (response.genres.isNotEmpty()) {
                     genreRepo.insertGenre(response.genres)
+                    isLoadingProgressBar.postValue(false)
                 }
             }
         }
@@ -88,11 +90,12 @@ class MoviesViewModel @Inject constructor(
         viewModelScope.launch {
             if (isNetworkAvailable) {
                 moviesUseCase.movieListUseCase.invoke(
-                    withGenres = genreSelected.toString())
+                    withGenres = genreSelected.toString()
+                )
                     .cachedIn(viewModelScope).collect { pagingModel ->
                         _state.emit(pagingModel)
-
                     }
+
             } else {
 
                 Pager(
@@ -102,11 +105,9 @@ class MoviesViewModel @Inject constructor(
                 ) {
                     movieListRepo.getMoviesList(genreSelected, sortBy)
                 }.flow.cachedIn(viewModelScope).collectLatest { pagingModel ->
+                    isLoadingProgressBar.postValue(false)
                     _state.emit(pagingModel)
-
                 }
-
-
             }
         }
     }
