@@ -1,6 +1,8 @@
 package com.example.movies.utils
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import java.text.SimpleDateFormat
@@ -16,6 +18,11 @@ object MovieUtils {
         return networkCapabilities != null &&
                 (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
                         networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
+    }
+
+    fun Context.isDarkThemeOn(): Boolean {
+        return resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
     }
 
     fun getFormattedDate(date: String?, inputFormat: String?, outputFormat: String?): String? {

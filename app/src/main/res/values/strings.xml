@@ -16,4 +16,5 @@
     <string name="dark_mode">Dark Mode</string>
     <string name="light_mode">Light Mode</string>
     <string name="no_data_to_show">No Data To Show</string>
+    <string name="mode">Theme Mode</string>
 </resources>

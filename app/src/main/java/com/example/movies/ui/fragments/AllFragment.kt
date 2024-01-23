@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +21,7 @@ import com.example.movies.models.Genre
 import com.example.movies.ui.adapters.AllFragmentAdapter
 import com.example.movies.ui.adapters.ProgressBarAdapter
 import com.example.movies.utils.MovieUtils.checkNetwork
+import com.example.movies.utils.MovieUtils.isDarkThemeOn
 import com.example.movies.viewmodels.MoviesViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -50,6 +54,7 @@ class AllFragment : Hilt_AllFragment(), OnRefreshListener {
         initUI()
         handleTabLayout()
         callObservers()
+        handleClicks()
     }
 
     private fun callObservers() {
@@ -82,6 +87,24 @@ class AllFragment : Hilt_AllFragment(), OnRefreshListener {
             }
         }
     }
+
+    private fun handleClicks() {
+        if (requireContext().isDarkThemeOn()) {
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
+            binding.toggle.isChecked = true
+        } else {
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
+            binding.toggle.isChecked = false
+        }
+        binding.toggle.setOnCheckedChangeListener { compoundButton, b ->
+            if (compoundButton.isChecked) {
+                setNightMode(true)
+            } else {
+                setNightMode(false)
+            }
+        }
+    }
+
 
     private fun initUI() {
         binding.srlAll.setOnRefreshListener(this)
@@ -123,6 +146,8 @@ class AllFragment : Hilt_AllFragment(), OnRefreshListener {
             recyclerAll.adapter = adapter.withLoadStateFooter(
                 progressBarAdapter
             )
+
+
         }
     }
 
@@ -159,6 +184,14 @@ class AllFragment : Hilt_AllFragment(), OnRefreshListener {
             this.id = genre.id!!
         }
         binding.tabLayout.addTab(tab)
+    }
+
+    private fun setNightMode(state: Boolean) {
+        if (state) {
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
+        }
     }
 
 }
